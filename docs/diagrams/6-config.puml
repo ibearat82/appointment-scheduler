@@ -1,0 +1,40 @@
+@startuml
+!include common.iuml
+title Configuration and cross-cutting classes (package com.gcu.scheduler.config)
+class SecurityConfig <<Configuration>> {
+  --
+  + passwordEncoder() : PasswordEncoder
+  + securityFilterChain(http : HttpSecurity) : SecurityFilterChain
+}
+class WebConfig <<Configuration>> {
+  - loggingInterceptor : LoggingInterceptor
+  --
+  + addInterceptors(registry : InterceptorRegistry) : void
+}
+class LoggingInterceptor <<Component>> {
+  - {static} log : Logger
+  - {static} START_ATTR : String
+  --
+  + preHandle(request : HttpServletRequest, response : HttpServletResponse, handler : Object) : boolean
+  + afterCompletion(request : HttpServletRequest, response : HttpServletResponse, handler : Object, ex : Exception) : void
+}
+class ClockConfig <<Configuration>> {
+  --
+  + clock() : Clock
+}
+class DataInitializer <<Component>> {
+  - userRepository : UserRepository
+  - passwordEncoder : PasswordEncoder
+  - adminEmail : String
+  - adminPassword : String
+  --
+  + run(args : String...) : void
+}
+interface HandlerInterceptor
+interface WebMvcConfigurer
+interface CommandLineRunner
+HandlerInterceptor <|.. LoggingInterceptor
+WebMvcConfigurer <|.. WebConfig
+CommandLineRunner <|.. DataInitializer
+WebConfig --> LoggingInterceptor
+@enduml

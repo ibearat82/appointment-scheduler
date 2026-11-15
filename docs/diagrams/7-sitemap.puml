@@ -1,0 +1,48 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam dpi 150
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2F5597
+}
+title Sitemap - 15 pages, 3 access levels
+left to right direction
+package "Public (guest)" #F2F2F2 {
+  rectangle "Home\n/" as home
+  rectangle "Log in\n/login" as login
+  rectangle "Register\n/register" as reg
+}
+package "Patient (ROLE_PATIENT)" #EAF3FB {
+  rectangle "Patient Dashboard\n/patient/dashboard" as pd
+  rectangle "Book Appointment\n/patient/book" as book
+  rectangle "Appointment Details /\nConfirmation\n/patient/appointments/{id}" as conf
+  rectangle "My Appointments\n/patient/appointments" as mine
+  rectangle "Reschedule\n/patient/appointments/{id}/edit" as edit
+  rectangle "My Profile\n/profile" as prof
+}
+package "Office staff (ROLE_ADMIN)" #FDF1E6 {
+  rectangle "Admin Dashboard\n/admin" as ad
+  rectangle "All Appointments\n/admin/appointments" as aa
+  rectangle "Time Slots\n/admin/slots" as ts
+  rectangle "Visit Types\n/admin/visit-types" as vt
+  rectangle "Add / Edit Visit Type\n/admin/visit-types/new | {id}/edit" as vtf
+}
+rectangle "Error page\n(403 / 404 / 500)" as err
+home --> login
+home --> reg
+reg --> login : account created
+login --> pd : patient
+login --> ad : admin
+pd --> book
+pd --> mine
+pd --> prof
+book --> conf : booked
+mine --> conf
+mine --> edit
+edit --> mine : saved
+ad --> aa
+ad --> ts
+ad --> vt
+vt --> vtf
+@enduml

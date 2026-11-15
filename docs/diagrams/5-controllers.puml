@@ -1,0 +1,74 @@
+@startuml
+!include common.iuml
+title Controllers (presentation, package com.gcu.scheduler.controller)
+class HomeController <<Controller>> {
+  - visitTypeService : VisitTypeService
+  --
+  + home(model : Model) : String
+  + dashboard(authentication : Authentication) : String
+  + accessDenied(model : Model) : String
+}
+class AuthController <<Controller>> {
+  - userService : UserService
+  --
+  + login() : String
+  + showRegister(model : Model) : String
+  + register(form : RegistrationForm, result : BindingResult, redirect : RedirectAttributes) : String
+}
+class AppointmentController <<Controller>> {
+  - appointmentService : AppointmentService
+  - timeSlotService : TimeSlotService
+  - visitTypeService : VisitTypeService
+  - userService : UserService
+  --
+  + dashboard(principal : Principal, model : Model) : String
+  + showBook(date : LocalDate, model : Model) : String
+  + book(date : LocalDate, form : BookingForm, result : BindingResult, principal : Principal, model : Model, redirect : RedirectAttributes) : String
+  + myAppointments(principal : Principal, model : Model) : String
+  + details(id : Long, principal : Principal, model : Model) : String
+  + showEdit(id : Long, date : LocalDate, principal : Principal, model : Model) : String
+  + edit(id : Long, date : LocalDate, form : BookingForm, result : BindingResult, principal : Principal, model : Model, redirect : RedirectAttributes) : String
+  + cancel(id : Long, principal : Principal, redirect : RedirectAttributes) : String
+  - populateSlotChoices(model : Model, requestedDate : LocalDate) : void
+}
+class ProfileController <<Controller>> {
+  - userService : UserService
+  --
+  + show(principal : Principal, model : Model) : String
+  + update(form : ProfileForm, result : BindingResult, principal : Principal, model : Model, redirect : RedirectAttributes) : String
+}
+class AdminController <<Controller>> {
+  - appointmentService : AppointmentService
+  - timeSlotService : TimeSlotService
+  - visitTypeService : VisitTypeService
+  - userService : UserService
+  --
+  + dashboard(model : Model) : String
+  + visitTypes(model : Model) : String
+  + newVisitType(model : Model) : String
+  + editVisitType(id : Long, model : Model) : String
+  + saveVisitType(visitType : VisitType, result : BindingResult, redirect : RedirectAttributes) : String
+  + deleteVisitType(id : Long, redirect : RedirectAttributes) : String
+  + slots(model : Model) : String
+  + generateSlots(form : SlotGenerationForm, result : BindingResult, model : Model, redirect : RedirectAttributes) : String
+  + deleteSlot(id : Long, redirect : RedirectAttributes) : String
+  + appointments(date : LocalDate, model : Model) : String
+  + cancelAppointment(id : Long, principal : Principal, redirect : RedirectAttributes) : String
+  + completeAppointment(id : Long, redirect : RedirectAttributes) : String
+}
+class GlobalExceptionHandler <<ControllerAdvice>> {
+  --
+  + notFound(ex : ResourceNotFoundException, model : Model) : String
+  + forbidden(ex : AccessDeniedBusinessException, model : Model) : String
+  + businessRule(ex : BookingException, model : Model) : String
+  + noPage(ex : NoResourceFoundException, model : Model) : String
+  + badParameter(ex : MethodArgumentTypeMismatchException, model : Model) : String
+  + unexpected(ex : Exception, model : Model) : String
+  - errorView(model : Model, status : int, message : String) : String
+}
+HomeController -[hidden]down- AuthController
+AuthController -[hidden]down- ProfileController
+AppointmentController -[hidden]down- AdminController
+AdminController -[hidden]down- GlobalExceptionHandler
+HomeController -[hidden]right- AppointmentController
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam dpi 150
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2F5597
+}
+title Book-an-appointment workflow (AppointmentService.book)
+start
+:Patient opens **Book Appointment**;
+:Choose a day (only days with open slots are listed);
+repeat
+  :Choose visit type and an open time;
+  :Submit form (POST /patient/book);
+  if (Form valid?\n(visit type + slot chosen)) then (no)
+    :Show field errors;
+  elseif (Visit type active?) then (no)
+    :Show "no longer offered";
+  else (yes)
+    :Lock the time slot row\n(SELECT ... FOR UPDATE);
+    if (Slot in the past?) then (yes)
+      :Show "time has passed";
+    elseif (Slot already taken?) then (yes)
+      :Show "slot was just taken";
+    else (no)
+      :Save appointment (BOOKED)\nmark slot unavailable;
+      if (UNIQUE slot_id violated?) then (yes)
+        :Show "slot was just taken";
+      else (no)
+        :Commit;
+        :Show confirmation page;
+        stop
+      endif
+    endif
+  endif
+repeat while (Patient tries again)
+@enduml

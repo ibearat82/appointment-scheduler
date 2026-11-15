@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Visit Types')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <h1 class="h3 mb-0">Visit types</h1>
+        <a th:href="@{/admin/visit-types/new}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add visit type</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light"><tr><th>Name</th><th>Description</th><th>Minutes</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+                <tbody>
+                <tr th:each="vt : ${visitTypes}">
+                    <td class="fw-semibold" th:text="${vt.name}">name</td>
+                    <td th:text="${vt.description}">desc</td>
+                    <td th:text="${vt.durationMinutes}">30</td>
+                    <td><span class="badge" th:classappend="${vt.active} ? 'text-bg-success' : 'text-bg-secondary'"
+                              th:text="${vt.active} ? 'Active' : 'Inactive'">Active</span></td>
+                    <td class="text-end text-nowrap">
+                        <a th:href="@{/admin/visit-types/{id}/edit(id=${vt.id})}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form th:action="@{/admin/visit-types/{id}/delete(id=${vt.id})}" method="post" class="d-inline"
+                              onsubmit="return confirm('Delete this visit type?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

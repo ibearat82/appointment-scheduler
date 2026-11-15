@@ -1,0 +1,40 @@
+@startuml
+!include common.iuml
+title Form models (DTOs, package com.gcu.scheduler.dto)
+class RegistrationForm {
+  - firstName : String
+  - lastName : String
+  - email : String
+  - phone : String
+  - dateOfBirth : LocalDate
+  - password : String
+  - confirmPassword : String
+  --
+  + isPasswordConfirmed() : boolean
+  + getters / setters
+}
+class ProfileForm {
+  - firstName : String
+  - lastName : String
+  - phone : String
+  - dateOfBirth : LocalDate
+  --
+  + getters / setters
+}
+class BookingForm {
+  - visitTypeId : Long
+  - slotId : Long
+  - notes : String
+  --
+  + getters / setters
+}
+class SlotGenerationForm {
+  - date : LocalDate
+  - fromTime : LocalTime
+  - toTime : LocalTime
+  - intervalMinutes : int
+  --
+  + isTimeRangeValid() : boolean
+  + getters / setters
+}
+@enduml

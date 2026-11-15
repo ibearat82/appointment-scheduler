@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Appointments')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <h1 class="h3 mb-0">My appointments</h1>
+        <a th:href="@{/patient/book}" class="btn btn-primary"><i class="bi bi-calendar-plus"></i> Book new</a>
+    </div>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                <tr><th>Date</th><th>Time</th><th>Visit type</th><th>Status</th><th class="text-end">Actions</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${appointments}"
+                    th:with="past=${a.timeSlot.slotDate.isBefore(today)}">
+                    <td th:text="${#temporals.format(a.timeSlot.slotDate, 'EEE, MMM d, yyyy')}">date</td>
+                    <td th:text="${#temporals.format(a.timeSlot.startTime, 'h:mm a')}">time</td>
+                    <td th:text="${a.visitType.name}">type</td>
+                    <td><span class="badge"
+                              th:classappend="${a.status.name() == 'BOOKED'} ? 'text-bg-success' : 'text-bg-secondary'"
+                              th:text="${a.status}">BOOKED</span></td>
+                    <td class="text-end text-nowrap">
+                        <a th:href="@{/patient/appointments/{id}(id=${a.id})}" class="btn btn-sm btn-outline-secondary">View</a>
+                        <th:block th:if="${a.status.name() == 'BOOKED' and !past}">
+                            <a th:href="@{/patient/appointments/{id}/edit(id=${a.id})}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form th:action="@{/patient/appointments/{id}/cancel(id=${a.id})}" method="post" class="d-inline"
+                                  onsubmit="return confirm('Cancel this appointment?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                            </form>
+                        </th:block>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(appointments)}">
+                    <td colspan="5" class="text-center text-muted py-4">You have no appointments yet.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

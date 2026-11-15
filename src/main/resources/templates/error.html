@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container text-center py-5">
+    <h1 class="display-4 text-primary" th:text="${status}">Error</h1>
+    <p class="lead" th:text="${message} ?: 'Something went wrong.'">Something went wrong.</p>
+    <a th:href="@{/dashboard}" class="btn btn-primary">Back to dashboard</a>
+    <a th:href="@{/}" class="btn btn-outline-secondary">Home</a>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

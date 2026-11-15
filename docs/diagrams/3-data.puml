@@ -1,0 +1,40 @@
+@startuml
+!include common.iuml
+title Data services (DAO, package com.gcu.scheduler.repository)
+interface "JpaRepository<T, ID>" as JpaRepository <<Spring Data>> {
+  + save(entity : T) : T
+  + saveAndFlush(entity : T) : T
+  + findById(id : ID) : Optional<T>
+  + findAll() : List<T>
+  + delete(entity : T) : void
+}
+interface UserRepository <<Repository>> {
+  + findByEmailIgnoreCase(email : String) : Optional<User>
+  + existsByEmailIgnoreCase(email : String) : boolean
+  + countByRole(role : Role) : long
+}
+interface VisitTypeRepository <<Repository>> {
+  + findByActiveTrueOrderByNameAsc() : List<VisitType>
+  + findAllByOrderByNameAsc() : List<VisitType>
+  + existsByNameIgnoreCase(name : String) : boolean
+  + existsByNameIgnoreCaseAndIdNot(name : String, id : Long) : boolean
+}
+interface TimeSlotRepository <<Repository>> {
+  + findBySlotDateAndAvailableTrueOrderByStartTimeAsc(date : LocalDate) : List<TimeSlot>
+  + findBySlotDateBetweenAndAvailableTrueOrderBySlotDateAscStartTimeAsc(from : LocalDate, to : LocalDate) : List<TimeSlot>
+  + findBySlotDateGreaterThanEqualOrderBySlotDateAscStartTimeAsc(from : LocalDate) : List<TimeSlot>
+  + existsBySlotDateAndStartTime(date : LocalDate, startTime : LocalTime) : boolean
+  + findByIdForUpdate(id : Long) : Optional<TimeSlot>
+}
+interface AppointmentRepository <<Repository>> {
+  + findByPatientIdOrdered(patientId : Long) : List<Appointment>
+  + findAllOrdered() : List<Appointment>
+  + findByDate(date : LocalDate) : List<Appointment>
+  + existsByTimeSlotId(slotId : Long) : boolean
+  + existsByVisitTypeId(visitTypeId : Long) : boolean
+}
+JpaRepository <|-- UserRepository : <User, Long>
+JpaRepository <|-- VisitTypeRepository : <VisitType, Long>
+JpaRepository <|-- TimeSlotRepository : <TimeSlot, Long>
+JpaRepository <|-- AppointmentRepository : <Appointment, Long>
+@enduml

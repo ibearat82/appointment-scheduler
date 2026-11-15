@@ -1,0 +1,8 @@
+/* Small additions on top of Bootstrap 5 */
+body { background-color: #f6f8fb; }
+.card { border: none; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.slot-option input { display: none; }
+.slot-option label { min-width: 6.5rem; }
+.slot-option input:checked + label { background-color: var(--bs-primary); color: #fff; }
+.hero { background: linear-gradient(135deg, #0d6efd 0%, #3d8bfd 100%); color: #fff; border-radius: 1rem; }
+.stat { font-size: 2rem; font-weight: 600; }

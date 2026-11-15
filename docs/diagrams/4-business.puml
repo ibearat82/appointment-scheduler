@@ -1,0 +1,68 @@
+@startuml
+!include common.iuml
+title Business services (package com.gcu.scheduler.service)
+class AppointmentService <<Service>> {
+  - appointmentRepository : AppointmentRepository
+  - timeSlotRepository : TimeSlotRepository
+  - visitTypeService : VisitTypeService
+  - userService : UserService
+  - clock : Clock
+  --
+  + book(patientEmail : String, form : BookingForm) : Appointment
+  + reschedule(appointmentId : Long, userEmail : String, form : BookingForm) : Appointment
+  + cancel(appointmentId : Long, userEmail : String) : void
+  + markCompleted(appointmentId : Long) : void
+  + findForUser(appointmentId : Long, userEmail : String) : Appointment
+  + findForPatient(patientEmail : String) : List<Appointment>
+  + findUpcomingForPatient(patientEmail : String) : List<Appointment>
+  + findAll() : List<Appointment>
+  + findByDate(date : LocalDate) : List<Appointment>
+  + today() : LocalDate
+  - requireActiveVisitType(visitTypeId : Long) : VisitType
+  - lockOpenFutureSlot(slotId : Long) : TimeSlot
+  - requireChangeable(appointment : Appointment) : void
+  - saveCatchingDoubleBooking(appointment : Appointment) : Appointment
+  - cleanNotes(notes : String) : String
+}
+class TimeSlotService <<Service>> {
+  + {static} BOOKING_WINDOW_DAYS : int = 30
+  - timeSlotRepository : TimeSlotRepository
+  - appointmentRepository : AppointmentRepository
+  - clock : Clock
+  --
+  + findOpenSlots(date : LocalDate) : List<TimeSlot>
+  + findDaysWithOpenSlots() : List<LocalDate>
+  + findUpcomingSlots() : List<TimeSlot>
+  + findById(id : Long) : TimeSlot
+  + generateSlots(form : SlotGenerationForm) : int
+  + deleteSlot(id : Long) : void
+}
+class VisitTypeService <<Service>> {
+  - visitTypeRepository : VisitTypeRepository
+  - appointmentRepository : AppointmentRepository
+  --
+  + findActive() : List<VisitType>
+  + findAll() : List<VisitType>
+  + findById(id : Long) : VisitType
+  + save(visitType : VisitType) : VisitType
+  + deleteOrDeactivate(id : Long) : boolean
+}
+class UserService <<Service>> {
+  - userRepository : UserRepository
+  - passwordEncoder : PasswordEncoder
+  --
+  + loadUserByUsername(email : String) : UserDetails
+  + registerPatient(form : RegistrationForm) : User
+  + findByEmail(email : String) : User
+  + toProfileForm(user : User) : ProfileForm
+  + updateProfile(email : String, form : ProfileForm) : User
+  + countPatients() : long
+  + findAll() : List<User>
+}
+interface UserDetailsService <<Spring Security>> {
+  + loadUserByUsername(username : String) : UserDetails
+}
+UserDetailsService <|.. UserService
+AppointmentService --> VisitTypeService
+AppointmentService --> UserService
+@enduml

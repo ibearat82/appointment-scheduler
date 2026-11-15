@@ -1,0 +1,66 @@
+@startuml
+!include common.iuml
+title Models (JPA entities, package com.gcu.scheduler.model)
+class User <<Entity>> {
+  - id : Long
+  - firstName : String
+  - lastName : String
+  - email : String
+  - phone : String
+  - dateOfBirth : LocalDate
+  - passwordHash : String
+  - role : Role
+  - createdAt : LocalDateTime
+  --
+  + getFullName() : String
+  # onCreate() : void
+  + getters / setters
+}
+class VisitType <<Entity>> {
+  - id : Long
+  - name : String
+  - description : String
+  - durationMinutes : int
+  - active : boolean
+  --
+  + getters / setters
+}
+class TimeSlot <<Entity>> {
+  - id : Long
+  - slotDate : LocalDate
+  - startTime : LocalTime
+  - endTime : LocalTime
+  - available : boolean
+  --
+  + getStartDateTime() : LocalDateTime
+  + isInPast(now : LocalDateTime) : boolean
+  + getters / setters
+}
+class Appointment <<Entity>> {
+  - id : Long
+  - patient : User
+  - visitType : VisitType
+  - timeSlot : TimeSlot
+  - status : AppointmentStatus
+  - notes : String
+  - createdAt : LocalDateTime
+  - updatedAt : LocalDateTime
+  --
+  # onCreate() : void
+  # onUpdate() : void
+  + getters / setters
+}
+enum Role {
+  PATIENT
+  ADMIN
+}
+enum AppointmentStatus {
+  BOOKED
+  COMPLETED
+}
+Appointment "0..*" --> "1" User : patient
+Appointment "0..*" --> "1" VisitType : visitType
+Appointment "0..1" --> "1" TimeSlot : timeSlot
+User --> Role
+Appointment --> AppointmentStatus
+@enduml

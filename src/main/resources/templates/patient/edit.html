@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reschedule Appointment')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <h1 class="h3 mb-3">Reschedule appointment</h1>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <div class="alert alert-info">
+        Current time: <strong th:text="${#temporals.format(appointment.timeSlot.slotDate, 'EEEE, MMM d')} + ' at ' + ${#temporals.format(appointment.timeSlot.startTime, 'h:mm a')}">date</strong>.
+        Your current slot stays reserved until you save a new one.
+    </div>
+    <div class="card p-4">
+        <div th:replace="~{fragments/slot-picker :: dayChooser('/patient/appointments/' + ${appointment.id} + '/edit')}"></div>
+
+        <form th:action="@{/patient/appointments/{id}/edit(id=${appointment.id}, date=${selectedDate})}"
+              th:object="${form}" method="post" novalidate>
+            <div class="mb-3">
+                <label for="visitTypeId" class="form-label fw-semibold">2. Visit type</label>
+                <select id="visitTypeId" th:field="*{visitTypeId}" class="form-select" th:errorclass="is-invalid">
+                    <option value="">Choose a visit type...</option>
+                    <option th:each="vt : ${visitTypes}" th:value="${vt.id}"
+                            th:text="${vt.name} + ' (' + ${vt.durationMinutes} + ' min)'">Checkup</option>
+                </select>
+                <div class="invalid-feedback" th:errors="*{visitTypeId}"></div>
+            </div>
+
+            <div class="mb-2 slot-option">
+                <input type="radio" name="slotId" id="keepSlot" th:value="${appointment.timeSlot.id}"
+                       th:checked="${form.slotId == appointment.timeSlot.id}">
+                <label class="btn btn-outline-secondary" for="keepSlot">Keep my current time</label>
+            </div>
+            <div th:replace="~{fragments/slot-picker :: slotChoices}"></div>
+
+            <div class="mb-3">
+                <label for="notes" class="form-label fw-semibold">Notes (optional)</label>
+                <textarea id="notes" th:field="*{notes}" class="form-control" rows="2" maxlength="255"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <a th:href="@{/patient/appointments}" class="btn btn-link">Back</a>
+        </form>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

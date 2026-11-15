@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container">
+    <h1 class="h3 mb-3">Office dashboard</h1>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3"><div class="card p-3"><div class="text-muted small">Today's appointments</div>
+            <div class="stat" th:text="${#lists.size(todaysAppointments)}">0</div></div></div>
+        <div class="col-6 col-lg-3"><div class="card p-3"><div class="text-muted small">Registered patients</div>
+            <div class="stat" th:text="${patientCount}">0</div></div></div>
+        <div class="col-6 col-lg-3"><div class="card p-3"><div class="text-muted small">Days with open slots</div>
+            <div class="stat" th:text="${openDays}">0</div></div></div>
+        <div class="col-6 col-lg-3"><div class="card p-3"><div class="text-muted small">Active visit types</div>
+            <div class="stat" th:text="${visitTypeCount}">0</div></div></div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Schedule for <span th:text="${#temporals.format(today, 'EEEE, MMM d, yyyy')}">today</span></span>
+            <a th:href="@{/admin/appointments}" class="btn btn-sm btn-outline-primary">All appointments</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead class="table-light"><tr><th>Time</th><th>Patient</th><th>Phone</th><th>Visit type</th><th>Status</th></tr></thead>
+                <tbody>
+                <tr th:each="a : ${todaysAppointments}">
+                    <td th:text="${#temporals.format(a.timeSlot.startTime, 'h:mm a')}">9:00 AM</td>
+                    <td th:text="${a.patient.fullName}">Name</td>
+                    <td th:text="${a.patient.phone}">phone</td>
+                    <td th:text="${a.visitType.name}">type</td>
+                    <td th:text="${a.status}">BOOKED</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(todaysAppointments)}"><td colspan="5" class="text-center text-muted py-4">No appointments today.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
