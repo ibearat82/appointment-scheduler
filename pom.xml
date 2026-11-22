@@ -13,7 +13,7 @@
 
     <groupId>com.gcu</groupId>
     <artifactId>appointment-scheduler</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
     <name>appointment-scheduler</name>
     <description>CST-323 CLC Project - Doctor's Office Appointment Scheduling Application (Group A2)</description>
 
